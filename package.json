@@ -1,9 +1,9 @@
 {
     "name": "openscad-language-support",
-    "displayName": "OpenSCAD Language Support",
-    "description": "Provides formatting, auto-completion, jump to definition, document symbols, and more you need!",
-    "version": "2.0.1",
-    "publisher": "Leathong",
+    "displayName": "OpenSCAD Language Support (patched LSP)",
+    "description": "Fork of Leathong's OpenSCAD Language Support with a crash-fixed language server. Provides formatting, auto-completion, jump to definition, document symbols, and more you need!",
+    "version": "2.0.2",
+    "publisher": "skinner927",
     "icon": "media/logo.png",
     "license": "SEE LICENSE IN LICENSE.txt",
     "engines": {
@@ -159,7 +159,7 @@
         "update-grammar": "js-yaml syntaxes/scad.yaml-tmLanguage > syntaxes/scad.tmLanguage.json"
     },
     "devDependencies": {
-        "@google/model-viewer": "^4.1.0",
+        "@google/model-viewer": "~4.1.0",
         "@types/command-exists": "^1.2.0",
         "@types/jsdom": "^16.2.10",
         "@types/node": "^20.9.0",

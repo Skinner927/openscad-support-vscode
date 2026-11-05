@@ -1,5 +1,17 @@
 # Changelog
 
+## v2.0.2 (skinner927 fork, 2026-11-05)
+
+### fix
+- Replace the bundled Linux and Windows language servers with builds of
+  [KarimAziev/openscad-LSP](https://github.com/KarimAziev/openscad-LSP) `a37e55a` plus a
+  local no-panic patch. Fixes the `parse_code.rs:64:70` panic that killed
+  go-to-definition until the window was reloaded. Details: `server/PATCHED-LSP.md`.
+- Published under publisher `skinner927` so Leathong's marketplace updates don't replace it.
+- Linux x64 and Windows x64 only; no macOS server is bundled.
+
+---
+
 ## [v2.0.1](https://github.com/Leathong/openscad-support-vscode/releases/tag/v2.0.1) (2025-05-28)
 
 ### modify

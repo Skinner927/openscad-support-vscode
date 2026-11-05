@@ -1,0 +1,49 @@
+diff --git a/src/server/parse_code.rs b/src/server/parse_code.rs
+index 6e5d673..5eace01 100644
+--- a/src/server/parse_code.rs
++++ b/src/server/parse_code.rs
+@@ -100,8 +100,27 @@ impl ParsedCode {
+         let mut old_tree = Some(&mut self.tree);
+         for event in events {
+             if let Some(range) = event.range {
+-                let start_ofs = find_offset(&self.code, range.start).unwrap();
+-                let end_ofs = find_offset(&self.code, range.end).unwrap();
++                let (start_ofs, end_ofs) = match (
++                    find_offset(&self.code, range.start),
++                    find_offset(&self.code, range.end),
++                ) {
++                    (Some(s), Some(e)) if s <= e => (s, e),
++                    _ => {
++                        // Our copy of the document is out of sync with the client
++                        // (e.g. the file changed on disk while we held a stale copy).
++                        // Skip the rest of this batch rather than panic; the next
++                        // didOpen or file-watcher refresh resyncs the text. Drop the
++                        // incremental tree so the reparse below matches `self.code`.
++                        err_to_console!(
++                            "ignoring out-of-sync edit to {}: range {:?} does not fit the cached text ({} bytes)",
++                            self.url,
++                            range,
++                            self.code.len()
++                        );
++                        old_tree = None;
++                        break;
++                    }
++                };
+                 self.code.replace_range(start_ofs..end_ofs, &event.text);
+ 
+                 let new_end_position = match event.text.rfind('\n') {
+diff --git a/src/server/utils.rs b/src/server/utils.rs
+index e1e9061..076f440 100644
+--- a/src/server/utils.rs
++++ b/src/server/utils.rs
+@@ -20,7 +20,9 @@ macro_rules! err_to_console {
+ pub(crate) fn find_offset(text: &str, pos: Position) -> Option<usize> {
+     let mut offset = 0;
+     for _ in 0..pos.line {
+-        offset += text[offset..].find('\n').unwrap_or_default() + 1;
++        // A line past the end of `text` means the client's view has diverged
++        // from ours; report it instead of slicing out of range.
++        offset += text[offset..].find('\n')? + 1;
+     }
+ 
+     let mut chars = text[offset..].chars();

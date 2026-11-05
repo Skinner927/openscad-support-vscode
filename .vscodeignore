@@ -39,3 +39,10 @@ syntaxes/*.yaml-tmLanguage
 
 # Log files
 *.log
+# Only the patched Linux and Windows servers are bundled (see server/PATCHED-LSP.md).
+# The macOS entry is a dangling symlink to a sibling checkout.
+server/openscad-lsp
+server/*.patch
+
+# Local working notes
+openscad-lsp-fix-plan.md
